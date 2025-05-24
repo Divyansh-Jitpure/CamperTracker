@@ -1,11 +1,17 @@
 import React from "react";
 import "./App.css";
+import { BrowserRouter as Router, Route, Routes } from "react-router";
+import Home from "./pages/Home";
 
 function App() {
   return (
-    <>
-      <h1 className="text-center text-2xl">Camper Tracker</h1>
-    </>
+    <main className="min-h-[100dvh] bg-[#FFDCDC]">
+      <Router>
+        <Routes>
+          <Route path="/" element={<Home />} />
+        </Routes>
+      </Router>
+    </main>
   );
 }
 

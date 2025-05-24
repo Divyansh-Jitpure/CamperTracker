@@ -1,1 +1,18 @@
+@import url('https://fonts.googleapis.com/css2?family=Ubuntu&display=swap');
 @import "tailwindcss";
+
+* {
+    font-family: "Ubuntu", sans-serif;
+    font-style: normal;
+}
+
+.analog-btn {
+    box-shadow: #683512 3px 3px 0px;
+    border-radius: 5px;
+    transition: transform 100ms, box-shadow 100ms;
+}
+
+.analog-btn:active {
+    box-shadow: 0px 0px 0px;
+    transform: translatey(3px) translatex(3px);
+}
