@@ -8,26 +8,35 @@ dotenv.config();
 const app = express();
 
 app.use(express.json());
-app.use(cors({ origin: process.env.CLIENT_URL }));
+app.use(cors({ origin: process.env.CLIENT_URL, credentials: true }));
 
 app.get("/", (req, res) => {
   res.send("Server is running...");
 });
 
-app.post("/api/addCamper", (req, res) => {
-  const { date } = req.body;
-  console.log("Received date:", date);
+app.post("/api/addCamper", async (req, res) => {
+  try {
+    const { date } = req.body;
 
-  if (!date) {
-    return res.status(400).json({ error: "Date is required" });
+    if (!date) {
+      return res.status(400).json({ error: "Date is required" });
+    }
+
+    const existingDate = await CamperData.findOne({ date });
+    if (existingDate) {
+      return res
+        .status(400)
+        .json({ error: "Camper for this date already exists" });
+    }
+
+    const newCamper = new CamperData({ date });
+
+    await newCamper.save();
+
+    res.status(201).json({ message: "Camper added successfully" });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to add camper", details: err });
   }
-  const newCamper = new CamperData({ date });
-  newCamper
-    .save()
-    .then(() => res.status(201).json({ message: "Camper added successfully" }))
-    .catch((err) =>
-      res.status(500).json({ error: "Failed to add camper", details: err })
-    );
 });
 
 mongoose
