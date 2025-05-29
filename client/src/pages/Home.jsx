@@ -7,7 +7,7 @@ const Home = () => {
   console.log(today);
 
   const addCamper = () => {
-    API.post("/addCamper", { date: today.toISOString() })
+    API.post("/addCamper", { date: today })
       .then((response) => {
         console.log("Camper added successfully:", response.data);
         alert("Camper added successfully!");
@@ -22,7 +22,7 @@ const Home = () => {
   };
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center gap-30 bg-[#FFF2EB]">
+    <div className="flex min-h-screen flex-col items-center justify-center gap-10 bg-[#FFF2EB]">
       <section className="flex flex-col items-center justify-center">
         <h1 className="text-5xl font-semibold text-[#E5989B]">
           Camper Tracker

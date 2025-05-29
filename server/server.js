@@ -22,14 +22,14 @@ app.post("/api/addCamper", async (req, res) => {
       return res.status(400).json({ error: "Date is required" });
     }
 
-    const existingDate = await CamperData.findOne({ date });
+    const existingDate = await CamperData.findOne({ date: date.slice(0, 10) });
     if (existingDate) {
       return res
         .status(400)
         .json({ error: "Camper for this date already exists" });
     }
 
-    const newCamper = new CamperData({ date });
+    const newCamper = new CamperData({ date: date.slice(0, 10) });
 
     await newCamper.save();
 
