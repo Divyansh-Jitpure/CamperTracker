@@ -39,6 +39,15 @@ app.post("/api/addCamper", async (req, res) => {
   }
 });
 
+app.get("/api/getCampers", async (req, res) => {
+  try {
+    const campers = await CamperData.find();
+    res.status(200).json({ campers });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch campers", details: err });
+  }
+});
+
 mongoose
   .connect(process.env.MONGO_URL)
   .then(() => console.log("MongoDB Connected"))

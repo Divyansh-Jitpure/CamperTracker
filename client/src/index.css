@@ -16,3 +16,25 @@
     box-shadow: 0px 0px 0px;
     transform: translatey(3px) translatex(3px);
 }
+
+/* In your CSS file (e.g., index.css or a dedicated style file) */
+.has-camper-entry {
+    background-color: rgb(120, 247, 120) !important;
+    /* A light orange/peach to highlight */
+
+    /* Make it a circle */
+}
+
+.has-camper-entry:focus {
+    background-color: #1e70ff !important;
+}
+
+/* Optional: Adjust for react-calendar's specific day tile styling */
+.react-calendar__tile {
+    /* You might need to adjust padding/margin here to make the circle look good */
+    padding: 10px 6.6667px;
+    /* Example, adjust as needed */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
