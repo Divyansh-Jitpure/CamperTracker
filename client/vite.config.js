@@ -16,7 +16,7 @@ export default defineConfig({
       manifest: {
         name: "Camper Tracker App", // Full app name
         short_name: "Camper", // Short name for home screen
-        description: "Effortlessly track camper entries.",
+        description: "Effortlessly track camper entries.", 
         theme_color: "#E5989B", // Match your app's theme
         background_color: "#FFF2EB", // Match your app's background
         display: "standalone", // Open like a native app
