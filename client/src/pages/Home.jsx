@@ -8,17 +8,27 @@ const Home = () => {
   // console.log(today);
 
   const addCamper = async (day) => {
-    await API.post("/addCamper", { date: day })
-      .then((response) => {
-        toast.success("Camper added successfully!");
-      })
-      .catch((error) => {
-        console.error(
-          "Error adding camper:",
-          error.response?.data || error.message,
-        );
-        toast.error(error.response?.data?.error || "Failed to add camper");
-      });
+    const addCamperPromise = new Promise(async (resolve, reject) => {
+      await API.post("/addCamper", { date: day })
+        .then(() => {
+          resolve();
+        })
+        .catch((error) => {
+          console.error(
+            "Error adding camper:",
+            error.response?.data || error.message,
+          );
+          reject(error.response?.data?.error || "Failed to add camper");
+        });
+    });
+
+    toast.promise(addCamperPromise, {
+      loading: "Adding Camper...",
+      success: "Camper added successfully!!",
+      error: (errMsg) => errMsg, // Show the specific error message
+    });
+
+    return addCamperPromise;
   };
 
   return (

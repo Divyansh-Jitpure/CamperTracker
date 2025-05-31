@@ -14,7 +14,6 @@ const Calendar = ({ addCamper }) => {
       const campersAPI = await API.get("/getCampers", {
         withCredentials: true,
       });
-      // console.log(campers.data.campers);
       setCampers(campersAPI.data.campers);
       return campersAPI.data.campers;
     } catch (err) {
@@ -22,8 +21,6 @@ const Calendar = ({ addCamper }) => {
         "Error fetching campers:",
         err.response?.data || err.message,
       );
-      // alert(err.response?.data?.error || "Failed to fetch campers");
-      // toast.error(err.response?.data?.error || "Failed to fetch campers");
     }
   };
 
@@ -37,17 +34,27 @@ const Calendar = ({ addCamper }) => {
   }, [campers]);
 
   const removeCamper = async (day) => {
-    await API.delete("/removeCamper", { data: { date: day } })
-      .then(() => {
-        toast.success("Camper removed successfully!");
-      })
-      .catch((err) => {
-        console.error(
-          "Error removing camper:",
-          err.response?.data || err.message,
-        );
-        toast.error(err.response?.data?.error || "Failed to remove camper");
-      });
+    const removeCamperPromise = new Promise(async (resolve, reject) => {
+      await API.delete("/removeCamper", { data: { date: day } })
+        .then(() => {
+          resolve();
+        })
+        .catch((error) => {
+          console.error(
+            "Error removing camper:",
+            error.response?.data || error.message,
+          );
+          reject(error.response?.data?.error || "Failed to remove camper");
+        });
+    });
+
+    toast.promise(removeCamperPromise, {
+      loading: "Removing Camper...",
+      success: "Camper removed successfully!!",
+      error: (errMsg) => errMsg, // Show the specific error message
+    });
+
+    return removeCamperPromise;
   };
 
   const tileClassName = ({ date, view }) => {
