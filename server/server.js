@@ -39,6 +39,29 @@ app.post("/api/addCamper", async (req, res) => {
   }
 });
 
+app.delete("/api/removeCamper", async (req, res) => {
+  try {
+    const { date } = req.body;
+    console.log(date);
+
+    if (!date) {
+      return res.status(400).json({ error: "Date is required" });
+    }
+
+    const deletedCamper = await CamperData.findOneAndDelete({
+      date: date.slice(0, 10),
+    });
+
+    if (!deletedCamper) {
+      return res.status(404).json({ error: "Camper not found for this date" });
+    }
+
+    res.status(200).json({ message: "Camper removed successfully" });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to remove camper", details: err });
+  }
+});
+
 app.get("/api/getCampers", async (req, res) => {
   try {
     const campers = await CamperData.find();

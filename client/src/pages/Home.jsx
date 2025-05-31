@@ -1,23 +1,23 @@
 import React, { useEffect, useState } from "react";
 import API from "../utils/api";
 import Calendar from "../components/Calendar";
+import { toast } from "sonner";
 
 const Home = () => {
   const today = new Date();
-  console.log(today);
+  // console.log(today);
 
   const addCamper = async (day) => {
     await API.post("/addCamper", { date: day })
       .then((response) => {
-        console.log("Camper added successfully:", response.data);
-        alert("Camper added successfully!");
+        toast.success("Camper added successfully!");
       })
       .catch((error) => {
         console.error(
           "Error adding camper:",
           error.response?.data || error.message,
         );
-        alert(error.response?.data?.error || "Failed to add camper");
+        toast.error(error.response?.data?.error || "Failed to add camper");
       });
   };
 

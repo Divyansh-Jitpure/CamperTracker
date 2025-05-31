@@ -2,6 +2,7 @@ import React, { use, useEffect, useState } from "react";
 import { Calendar as Calendarpack } from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import API from "../utils/api";
+import { toast } from "sonner";
 
 const Calendar = ({ addCamper }) => {
   const [markedDates, setMarkedDates] = useState([]);
@@ -21,7 +22,8 @@ const Calendar = ({ addCamper }) => {
         "Error fetching campers:",
         err.response?.data || err.message,
       );
-      alert(err.response?.data?.error || "Failed to fetch campers");
+      // alert(err.response?.data?.error || "Failed to fetch campers");
+      // toast.error(err.response?.data?.error || "Failed to fetch campers");
     }
   };
 
@@ -29,14 +31,24 @@ const Calendar = ({ addCamper }) => {
     getCampers();
   }, [campers]);
 
-  // useEffect(() => {
-  //   console.log(selectedDate);
-  // }, [selectedDate]);
-
   useEffect(() => {
     const dates = campers.map((camper) => new Date(camper.date));
     setMarkedDates(dates);
   }, [campers]);
+
+  const removeCamper = async (day) => {
+    await API.delete("/removeCamper", { data: { date: day } })
+      .then(() => {
+        toast.success("Camper removed successfully!");
+      })
+      .catch((err) => {
+        console.error(
+          "Error removing camper:",
+          err.response?.data || err.message,
+        );
+        toast.error(err.response?.data?.error || "Failed to remove camper");
+      });
+  };
 
   const tileClassName = ({ date, view }) => {
     // Only apply class in 'month' view
@@ -69,7 +81,7 @@ const Calendar = ({ addCamper }) => {
         tileClassName={tileClassName}
         onClickDay={(value, event) => {
           setSelectedDate(value);
-          console.log(value);
+          // console.log(value);
         }}
       />
 
@@ -85,10 +97,20 @@ const Calendar = ({ addCamper }) => {
                 date.getMonth() === selectedDate.getMonth() &&
                 date.getDate() === selectedDate.getDate(),
             ) ? (
-              "Camper is present on this date."
+              <>
+                <p>Camper received on this date.</p>
+                <button
+                  onClick={() =>
+                    removeCamper(formatDateToYYYYMMDD(selectedDate))
+                  }
+                  className="analog-btn rounded-m mt-4 cursor-pointer bg-[#FFD6BA] px-3 py-1 text-2xl hover:bg-[#ffcdac]"
+                >
+                  Remove Camper for this date
+                </button>
+              </>
             ) : (
               <>
-                <p>No camper entry for this date.</p>
+                <p>No camper received on this date.</p>
                 <button
                   onClick={() => addCamper(formatDateToYYYYMMDD(selectedDate))}
                   className="analog-btn rounded-m mt-4 cursor-pointer bg-[#FFD6BA] px-3 py-1 text-2xl hover:bg-[#ffcdac]"
