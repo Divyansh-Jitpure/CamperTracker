@@ -1,61 +1,19 @@
-import React, { use, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Calendar as Calendarpack } from "react-calendar";
 import "react-calendar/dist/Calendar.css";
-import API from "../utils/api";
-import { toast } from "sonner";
+import { CamperContext } from "../context/camperContext";
 
 const Calendar = ({ addCamper }) => {
   const [markedDates, setMarkedDates] = useState([]);
-  const [campers, setCampers] = useState([]);
+
   const [selectedDate, setSelectedDate] = useState();
 
-  const getCampers = async () => {
-    try {
-      const campersAPI = await API.get("/getCampers", {
-        withCredentials: true,
-      });
-      setCampers(campersAPI.data.campers);
-      return campersAPI.data.campers;
-    } catch (err) {
-      console.error(
-        "Error fetching campers:",
-        err.response?.data || err.message,
-      );
-    }
-  };
-
-  useEffect(() => {
-    getCampers();
-  }, [campers]);
+  const { campers, removeCamper } = useContext(CamperContext);
 
   useEffect(() => {
     const dates = campers.map((camper) => new Date(camper.date));
     setMarkedDates(dates);
   }, [campers]);
-
-  const removeCamper = async (day) => {
-    const removeCamperPromise = new Promise(async (resolve, reject) => {
-      await API.delete("/removeCamper", { data: { date: day } })
-        .then(() => {
-          resolve();
-        })
-        .catch((error) => {
-          console.error(
-            "Error removing camper:",
-            error.response?.data || error.message,
-          );
-          reject(error.response?.data?.error || "Failed to remove camper");
-        });
-    });
-
-    toast.promise(removeCamperPromise, {
-      loading: "Removing Camper...",
-      success: "Camper removed successfully!!",
-      error: (errMsg) => errMsg, // Show the specific error message
-    });
-
-    return removeCamperPromise;
-  };
 
   const tileClassName = ({ date, view }) => {
     // Only apply class in 'month' view

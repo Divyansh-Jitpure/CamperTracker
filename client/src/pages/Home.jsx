@@ -1,35 +1,30 @@
-import React, { useEffect, useState } from "react";
+import { useContext } from "react";
 import API from "../utils/api";
 import Calendar from "../components/Calendar";
 import { toast } from "sonner";
+import { CamperContext } from "../context/camperContext";
 
 const Home = () => {
   const today = new Date();
-  // console.log(today);
+  const { addCamper, loading } = useContext(CamperContext);
 
-  const addCamper = async (day) => {
-    const addCamperPromise = new Promise(async (resolve, reject) => {
-      await API.post("/addCamper", { date: day })
-        .then(() => {
-          resolve();
-        })
-        .catch((error) => {
-          console.error(
-            "Error adding camper:",
-            error.response?.data || error.message,
-          );
-          reject(error.response?.data?.error || "Failed to add camper");
-        });
-    });
-
-    toast.promise(addCamperPromise, {
-      loading: "Adding Camper...",
-      success: "Camper added successfully!!",
-      error: (errMsg) => errMsg, // Show the specific error message
-    });
-
-    return addCamperPromise;
-  };
+  if (loading) {
+    return (
+      // <div className="flex h-screen items-center justify-center text-white">
+      //   Loading...
+      // </div>
+      /* From Uiverse.io by Cybercom682 */
+      <div className="flex h-screen flex-col items-center justify-center pb-10">
+        <div className="mx-auto h-20 w-20 animate-spin rounded-full border-6 border-dashed border-[#E5989B]"></div>
+        <section className="text-center">
+          <h2 className="mt-4 text-3xl text-zinc-700">Hold on</h2>
+          <p className="text-2xl text-zinc-500">
+            Camper Tracker is starting...
+          </p>
+        </section>
+      </div>
+    );
+  }
 
   return (
     <div className="flex min-h-[100dvh] flex-col items-center justify-center gap-15 bg-[#FFF2EB]">
