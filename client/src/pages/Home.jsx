@@ -25,15 +25,15 @@ const Home = () => {
 
   return (
     <div className="flex min-h-[100dvh] flex-col items-center justify-center gap-15 bg-[#FFF2EB]">
-      <section className="flex flex-col items-center justify-center">
+      <section className="flex flex-col items-center justify-center gap-2">
         <h1 className="text-5xl font-semibold text-[#E5989B]">
           Camper Tracker
         </h1>
 
-        <p className="mt-4 text-xl">Total Campers: {campers.length}</p>
+        <p className="text-xl">Total Campers: {campers.length}</p>
         <p className="text-xl">Total Campers paid: 8 (200₹)</p>
 
-        <p className="my-2 text-3xl">Today is {today.toDateString()}</p>
+        <p className="text-3xl">Today is {today.toDateString()}</p>
 
         <button
           onClick={() => addCamper(today)}

@@ -9,6 +9,7 @@ dotenv.config();
 
 const app = express();
 
+// Middleware setup
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(
@@ -19,6 +20,7 @@ app.use(
 );
 app.use("/uploads", express.static("uploads"));
 
+// Set up multer for file uploads
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, "uploads");
@@ -30,24 +32,12 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
+// Basic route to check if the server is running
 app.get("/", (req, res) => {
   res.send("Server is running...");
 });
 
-app.post("/api/uploadBill", upload.single("bill"), async (req, res) => {
-  try {
-    if (!req.file) {
-      return res.status(400).json({ error: "No file uploaded" });
-    }
-    const { path, filename } = req.file;
-    const bill = await UploadBill.create({ path, filename });
-    res.status(200).json({ message: "Bill uploaded successfully", bill });
-  } catch (err) {
-    console.error("Error uploading bill:", err);
-    res.status(500).json({ error: "Failed to upload bill" });
-  }
-});
-
+// Add a camper
 app.post("/api/addCamper", async (req, res) => {
   try {
     const { date } = req.body;
@@ -73,6 +63,7 @@ app.post("/api/addCamper", async (req, res) => {
   }
 });
 
+// Remove a camper
 app.delete("/api/removeCamper", async (req, res) => {
   try {
     const { date } = req.body;
@@ -96,6 +87,7 @@ app.delete("/api/removeCamper", async (req, res) => {
   }
 });
 
+// Get all campers
 app.get("/api/getCampers", async (req, res) => {
   try {
     const campers = await CamperData.find();
@@ -105,11 +97,59 @@ app.get("/api/getCampers", async (req, res) => {
   }
 });
 
+// Upload a bill
+app.post("/api/uploadBill", upload.single("bill"), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: "No file uploaded" });
+    }
+    const { path, filename } = req.file;
+    const bill = await UploadBill.create({ path, filename });
+    res.status(200).json({ message: "Bill uploaded successfully", bill });
+  } catch (err) {
+    console.error("Error uploading bill:", err);
+    res.status(500).json({ error: "Failed to upload bill", details: err });
+  }
+});
+
+// Get all bills
+app.get("/api/getBills", async (req, res) => {
+  try {
+    const biils = await UploadBill.find();
+
+    if (!biils) {
+      return res.status(404).json({ error: "No bills found" });
+    }
+
+    res.status(200).json({ biils });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch bills", details: err });
+  }
+});
+
+// Get a specific bill by ID
+app.get("/api/getBill/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const biil = await UploadBill.findById(id);
+
+    if (!biil) {
+      return res.status(404).json({ error: "No bill found" });
+    }
+
+    res.status(200).json({ biil });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch bills", details: err });
+  }
+});
+
+// Connect to MongoDB
 mongoose
   .connect(process.env.MONGO_URL)
   .then(() => console.log("MongoDB Connected"))
   .catch((err) => console.log("MongoDB Connection Failed:", err));
 
+// Start the server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log("Server is running on port", PORT);

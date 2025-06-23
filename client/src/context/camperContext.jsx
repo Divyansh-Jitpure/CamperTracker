@@ -27,7 +27,7 @@ export const CamperProvider = ({ children }) => {
 
   useEffect(() => {
     getCampers();
-  }, []);
+  }, [campers]);
 
   const addCamper = async (day) => {
     const addCamperPromise = new Promise(async (resolve, reject) => {
@@ -103,6 +103,12 @@ export const CamperProvider = ({ children }) => {
     });
     return uploadPromise;
   };
+
+
+  
+
+
+
 
   return (
     <CamperContext.Provider
