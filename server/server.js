@@ -67,7 +67,6 @@ app.post("/api/addCamper", async (req, res) => {
 app.delete("/api/removeCamper", async (req, res) => {
   try {
     const { date } = req.body;
-    console.log(date);
 
     if (!date) {
       return res.status(400).json({ error: "Date is required" });
@@ -87,6 +86,17 @@ app.delete("/api/removeCamper", async (req, res) => {
   }
 });
 
+app.delete("/api/deleteBill", async (req, res) => {
+  try {
+    const { bill } = req.body;
+
+    await UploadBill.findByIdAndDelete(bill);
+    res.status(200).json({ message: "Bill deleted successfully" });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to delete camper", details: err });
+  }
+});
+
 // Get all campers
 app.get("/api/getCampers", async (req, res) => {
   try {
@@ -94,6 +104,21 @@ app.get("/api/getCampers", async (req, res) => {
     res.status(200).json({ campers });
   } catch (err) {
     res.status(500).json({ error: "Failed to fetch campers", details: err });
+  }
+});
+
+// Get all bills
+app.get("/api/getBills", async (req, res) => {
+  try {
+    const bills = await UploadBill.find();
+
+    if (!bills) {
+      return res.status(404).json({ error: "No bills found" });
+    }
+
+    res.status(200).json({ bills });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch bills", details: err });
   }
 });
 
@@ -112,36 +137,21 @@ app.post("/api/uploadBill", upload.single("bill"), async (req, res) => {
   }
 });
 
-// Get all bills
-app.get("/api/getBills", async (req, res) => {
-  try {
-    const biils = await UploadBill.find();
-
-    if (!biils) {
-      return res.status(404).json({ error: "No bills found" });
-    }
-
-    res.status(200).json({ biils });
-  } catch (err) {
-    res.status(500).json({ error: "Failed to fetch bills", details: err });
-  }
-});
-
 // Get a specific bill by ID
-app.get("/api/getBill/:id", async (req, res) => {
-  try {
-    const { id } = req.params;
-    const biil = await UploadBill.findById(id);
+// app.get("/api/getBill/:id", async (req, res) => {
+//   try {
+//     const { id } = req.params;
+//     const biil = await UploadBill.findById(id);
 
-    if (!biil) {
-      return res.status(404).json({ error: "No bill found" });
-    }
+//     if (!biil) {
+//       return res.status(404).json({ error: "No bill found" });
+//     }
 
-    res.status(200).json({ biil });
-  } catch (err) {
-    res.status(500).json({ error: "Failed to fetch bills", details: err });
-  }
-});
+//     res.status(200).json({ biil });
+//   } catch (err) {
+//     res.status(500).json({ error: "Failed to fetch bills", details: err });
+//   }
+// });
 
 // Connect to MongoDB
 mongoose

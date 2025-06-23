@@ -5,14 +5,13 @@ import { toast } from "sonner";
 export const CamperContext = createContext();
 
 export const CamperProvider = ({ children }) => {
+  const [bills, setBills] = useState([]);
   const [campers, setCampers] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const getCampers = async () => {
     try {
-      const campersAPI = await API.get("/getCampers", {
-        withCredentials: true,
-      });
+      const campersAPI = await API.get("/getCampers");
       setCampers(campersAPI.data.campers);
       return campersAPI.data.campers;
     } catch (err) {
@@ -28,6 +27,22 @@ export const CamperProvider = ({ children }) => {
   useEffect(() => {
     getCampers();
   }, [campers]);
+
+  const getBills = async () => {
+    try {
+      const bills = await API.get("/getBills");
+      setBills(bills.data.bills);
+      return bills.data.bills;
+    } catch (err) {
+      console.error("Error fetching bills:", err.response?.data || err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    getBills();
+  }, [bills]);
 
   const addCamper = async (day) => {
     const addCamperPromise = new Promise(async (resolve, reject) => {
@@ -77,9 +92,31 @@ export const CamperProvider = ({ children }) => {
     return removeCamperPromise;
   };
 
-  const uploadBill = async (bill) => {
-    console.log(bill);
+  const deleteBill = async (bill) => {
+    const deleteBillPromise = new Promise(async (resolve, reject) => {
+      await API.delete("/deleteBill", { data: { bill } })
+        .then(() => {
+          resolve();
+        })
+        .catch((error) => {
+          console.error(
+            "Error deleting bill:",
+            error.response?.data || error.message,
+          );
+          reject(error.response?.data?.error || "Failed to delete bill");
+        });
+    });
 
+    toast.promise(deleteBillPromise, {
+      loading: "Deleting Bill...",
+      success: "Bill deleted successfully!!",
+      error: (errMsg) => errMsg, // Show the specific error message
+    });
+
+    return deleteBillPromise;
+  };
+
+  const uploadBill = async (bill) => {
     const formData = new FormData();
     formData.append("bill", bill);
 
@@ -104,15 +141,17 @@ export const CamperProvider = ({ children }) => {
     return uploadPromise;
   };
 
-
-  
-
-
-
-
   return (
     <CamperContext.Provider
-      value={{ campers, loading, removeCamper, addCamper, uploadBill }}
+      value={{
+        campers,
+        loading,
+        removeCamper,
+        addCamper,
+        uploadBill,
+        bills,
+        deleteBill,
+      }}
     >
       {children}
     </CamperContext.Provider>

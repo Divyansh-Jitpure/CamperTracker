@@ -26,7 +26,10 @@ const Home = () => {
   return (
     <div className="flex min-h-[100dvh] flex-col items-center justify-center gap-15 bg-[#FFF2EB]">
       <section className="flex flex-col items-center justify-center gap-2">
-        <h1 className="text-5xl font-semibold text-[#E5989B]">
+        <h1
+          onClick={() => navigate("/")}
+          className="cursor-pointer text-5xl font-semibold text-[#E5989B]"
+        >
           Camper Tracker
         </h1>
 
