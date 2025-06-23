@@ -1,19 +1,16 @@
 import { useContext } from "react";
-import API from "../utils/api";
 import Calendar from "../components/Calendar";
-import { toast } from "sonner";
 import { CamperContext } from "../context/camperContext";
+import { useNavigate } from "react-router";
 
 const Home = () => {
   const today = new Date();
-  const { addCamper, loading } = useContext(CamperContext);
+  const { addCamper, loading, campers } = useContext(CamperContext);
+
+  const navigate = useNavigate();
 
   if (loading) {
     return (
-      // <div className="flex h-screen items-center justify-center text-white">
-      //   Loading...
-      // </div>
-      /* From Uiverse.io by Cybercom682 */
       <div className="flex h-screen flex-col items-center justify-center pb-10">
         <div className="mx-auto h-20 w-20 animate-spin rounded-full border-6 border-dashed border-[#E5989B]"></div>
         <section className="text-center">
@@ -33,16 +30,25 @@ const Home = () => {
           Camper Tracker
         </h1>
 
-        <p className="my-5 text-3xl">Today is {today.toDateString()}</p>
+        <p className="mt-4 text-xl">Total Campers: {campers.length}</p>
+        <p className="text-xl">Total Campers paid: 8 (200₹)</p>
+
+        <p className="my-2 text-3xl">Today is {today.toDateString()}</p>
 
         <button
           onClick={() => addCamper(today)}
-          className="analog-btn cursor-pointer rounded-md bg-[#FFD6BA] px-3 py-1 text-2xl hover:bg-[#ffcdac]"
+          className="analog-btn cursor-pointer bg-[#FFD6BA] px-3 py-1 text-2xl hover:bg-[#ffcdac]"
         >
           Add Camper For Today
         </button>
       </section>
       <Calendar addCamper={addCamper} />
+      <button
+        onClick={() => navigate("/bills")}
+        className="analog-btn cursor-pointer bg-[#FFD6BA] px-3 py-1 text-2xl hover:bg-[#ffcdac]"
+      >
+        See Biils
+      </button>
     </div>
   );
 };

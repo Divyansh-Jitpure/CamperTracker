@@ -3,6 +3,7 @@ import "./App.css";
 import { BrowserRouter as Router, Route, Routes } from "react-router";
 import Home from "./pages/Home";
 import { Toaster, toast } from "sonner";
+import Bills from "./pages/Bills";
 
 function App() {
   return (
@@ -11,6 +12,7 @@ function App() {
         <Toaster richColors />
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/bills" element={<Bills />} />
         </Routes>
       </Router>
     </main>

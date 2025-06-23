@@ -27,7 +27,7 @@ export const CamperProvider = ({ children }) => {
 
   useEffect(() => {
     getCampers();
-  }, [campers]);
+  }, []);
 
   const addCamper = async (day) => {
     const addCamperPromise = new Promise(async (resolve, reject) => {
@@ -77,9 +77,36 @@ export const CamperProvider = ({ children }) => {
     return removeCamperPromise;
   };
 
+  const uploadBill = async (bill) => {
+    console.log(bill);
+
+    const formData = new FormData();
+    formData.append("bill", bill);
+
+    const uploadPromise = new Promise(async (resolve, reject) => {
+      await API.post("/uploadBill", formData)
+        .then(() => {
+          resolve();
+        })
+        .catch((error) => {
+          console.error(
+            "Error uploading bill:",
+            error.response?.data || error.message,
+          );
+          reject(error.response?.data?.error || "Failed to upload bill");
+        });
+    });
+    toast.promise(uploadPromise, {
+      loading: "Uploading Bill...",
+      success: "Bill uploaded successfully!!",
+      error: (errMsg) => errMsg, // Show the specific error message
+    });
+    return uploadPromise;
+  };
+
   return (
     <CamperContext.Provider
-      value={{ campers, loading, removeCamper, addCamper }}
+      value={{ campers, loading, removeCamper, addCamper, uploadBill }}
     >
       {children}
     </CamperContext.Provider>
