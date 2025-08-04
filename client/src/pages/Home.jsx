@@ -3,12 +3,15 @@ import Calendar from "../components/Calendar";
 import { CamperContext } from "../context/camperContext";
 import { useNavigate } from "react-router";
 
+// Home page component
 const Home = () => {
-  const today = new Date();
+  const today = new Date(); // Get today's date
+  // Get camper context values
   const { addCamper, loading, campers } = useContext(CamperContext);
 
-  const navigate = useNavigate();
+  const navigate = useNavigate(); // For navigation
 
+  // Show loading spinner while data is loading
   if (loading) {
     return (
       <div className="flex h-screen flex-col items-center justify-center pb-10">
@@ -23,9 +26,11 @@ const Home = () => {
     );
   }
 
+  // Main content
   return (
     <div className="flex min-h-[100dvh] flex-col items-center justify-center gap-15 bg-[#FFF2EB]">
       <section className="flex flex-col items-center justify-center gap-2">
+        {/* App title, navigates to home on click */}
         <h1
           onClick={() => navigate("/")}
           className="cursor-pointer text-5xl font-semibold text-[#E5989B]"
@@ -33,11 +38,15 @@ const Home = () => {
           Camper Tracker
         </h1>
 
+        {/* Show total campers */}
         <p className="text-xl">Total Campers: {campers.length}</p>
+        {/* Hardcoded paid campers info */}
         <p className="text-xl">Total Campers paid: 8 (200₹)</p>
 
+        {/* Show today's date */}
         <p className="text-3xl">Today is {today.toDateString()}</p>
 
+        {/* Button to add camper for today */}
         <button
           onClick={() => addCamper(today)}
           className="analog-btn cursor-pointer bg-[#FFD6BA] px-3 py-1 text-2xl hover:bg-[#ffcdac]"
@@ -45,7 +54,9 @@ const Home = () => {
           Add Camper For Today
         </button>
       </section>
+      {/* Calendar component */}
       <Calendar addCamper={addCamper} />
+      {/* Button to navigate to bills page */}
       <button
         onClick={() => navigate("/bills")}
         className="analog-btn cursor-pointer bg-[#FFD6BA] px-3 py-1 text-2xl hover:bg-[#ffcdac]"
